@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SaaSCRM.Application\SaaSCRM.Application.csproj" />
+    <ProjectReference Include="..\SaaSCRM.Domain\SaaSCRM.Domain.csproj" />
+    <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>
