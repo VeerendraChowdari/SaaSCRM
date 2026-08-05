@@ -7,14 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SaaSCRM.Application\SaaSCRM.Application.csproj" />
-    <ProjectReference Include="..\SaaSCRM.Domain\SaaSCRM.Domain.csproj" />
-    <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\" />
-    <Folder Include="Repositories\" />
+    <ProjectReference Include="..\SaaSCRM.Application\SaaSCRM.Application.csproj" />
+    <ProjectReference Include="..\SaaSCRM.Domain\SaaSCRM.Domain.csproj" />
+    <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
   </ItemGroup>
 
 </Project>
