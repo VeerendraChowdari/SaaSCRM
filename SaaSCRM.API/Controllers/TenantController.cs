@@ -22,5 +22,35 @@ namespace SaaSCRM.API.Controllers
                 return BadRequest(result);
             return Ok(result);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var result = await _tenantService.GetAllAsync();
+            return Ok(result);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(Guid id)
+        {
+            var result = await _tenantService.GetByIdAsync(id);
+
+            if (result == null)
+                return NotFound("Tenant not found.");
+
+            return Ok(result);
+        }
+
+        [HttpGet("CompanyName/{CompanyName}")]
+        public async Task<IActionResult> GetByCompanyNameAsync(String CompanyName)
+        {
+            var res = await _tenantService.GetByCompanyNameAsync(CompanyName);
+            return Ok(res);
+        }
+
+        [HttpGet("emailid/{emailid}")]
+        public async Task<IActionResult> GetByEmailAsync(string emailid)
+        {
+            var res = await _tenantService.GetByEmailAsync(emailid);
+            return Ok(res);
+        }
     }
 }

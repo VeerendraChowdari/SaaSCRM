@@ -21,7 +21,7 @@ namespace SaaSCRM.Infrastructure.Repositories
 
         public async Task AddAsync(Tenant tenant)
         {
-            await _Context.AddAsync(tenant);
+            await _Context.Tenants.AddAsync(tenant);
             await _Context.SaveChangesAsync();
         }
 
@@ -35,29 +35,38 @@ namespace SaaSCRM.Infrastructure.Repositories
             return await _Context.Tenants.AnyAsync(x => x.CompanyName == companyName);
         }
 
-        public Task<IEnumerable<Tenant>> GetAllAsync()
+        public async Task<IEnumerable<Tenant>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _Context.Tenants.ToListAsync();
         }
 
-        public Task<Tenant?> GetByCompanyNameAsync(string companyName)
+        public async Task<Tenant?> GetByCompanyNameAsync(string companyName)
         {
-            throw new NotImplementedException();
+            return await _Context.Tenants.FirstOrDefaultAsync(x => x.CompanyName == companyName);
         }
 
-        public Task<Tenant?> GetByEmailAsync(string email)
+        public async Task<Tenant?> GetByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return await _Context.Tenants.FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public Task<Tenant?> GetByIdAsync(Guid id)
+        public async Task<Tenant?> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _Context.Tenants.FindAsync(id);
         }
 
-        public Task UpdateAsync(Tenant tenant)
+        public async Task UpdateAsync(Tenant tenant)
         {
-            throw new NotImplementedException();
+            var existingTenant = await _Context.Tenants.FindAsync(tenant.Id);
+            if (existingTenant == null)
+                return;
+            existingTenant.CompanyName = tenant.CompanyName;
+            existingTenant.Email = tenant.Email;
+            existingTenant.PhoneNumber = tenant.PhoneNumber;
+            existingTenant.Address = tenant.Address;
+            existingTenant.IsActive = tenant.IsActive;
+
+            await _Context.SaveChangesAsync();
         }
     }
 }
