@@ -1,0 +1,180 @@
+[33mcommit de8b60094e57f8d68a56d887b6a8f4c5888747c8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author:     Chowdari Veerendra Kumar <chowdariveeru@gmail.com>
+AuthorDate: Thu Aug 6 20:05:55 2026 +0530
+Commit:     Chowdari Veerendra Kumar <chowdariveeru@gmail.com>
+CommitDate: Thu Aug 6 20:05:55 2026 +0530
+
+    Tenant Implementation Complete
+
+[1mdiff --git a/SaaSCRM.API/Controllers/TenantController.cs b/SaaSCRM.API/Controllers/TenantController.cs[m
+[1mindex 7877686..341220e 100644[m
+[1m--- a/SaaSCRM.API/Controllers/TenantController.cs[m
+[1m+++ b/SaaSCRM.API/Controllers/TenantController.cs[m
+[36m@@ -22,5 +22,35 @@[m [mnamespace SaaSCRM.API.Controllers[m
+                 return BadRequest(result);[m
+             return Ok(result);[m
+         }[m
+[32m+[m[32m        [HttpGet][m
+[32m+[m[32m        public async Task<IActionResult> GetAllAsync()[m
+[32m+[m[32m        {[m
+[32m+[m[32m            var result = await _tenantService.GetAllAsync();[m
+[32m+[m[32m            return Ok(result);[m
+[32m+[m[32m        }[m
+[32m+[m[32m        [HttpGet("{id}")][m
+[32m+[m[32m        public async Task<IActionResult> GetByIdAsync(Guid id)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            var result = await _tenantService.GetByIdAsync(id);[m
+[32m+[m
+[32m+[m[32m            if (result == null)[m
+[32m+[m[32m                return NotFound("Tenant not found.");[m
+[32m+[m
+[32m+[m[32m            return Ok(result);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        [HttpGet("CompanyName/{CompanyName}")][m
+[32m+[m[32m        public async Task<IActionResult> GetByCompanyNameAsync(String CompanyName)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            var res = await _tenantService.GetByCompanyNameAsync(CompanyName);[m
+[32m+[m[32m            return Ok(res);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        [HttpGet("emailid/{emailid}")][m
+[32m+[m[32m        public async Task<IActionResult> GetByEmailAsync(string emailid)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            var res = await _tenantService.GetByEmailAsync(emailid);[m
+[32m+[m[32m            return Ok(res);[m
+[32m+[m[32m        }[m
+     }[m
+ }[m
+[1mdiff --git a/SaaSCRM.Application/SaaSCRM.Application.csproj b/SaaSCRM.Application/SaaSCRM.Application.csproj[m
+[1mindex bb13e6a..2c00014 100644[m
+[1m--- a/SaaSCRM.Application/SaaSCRM.Application.csproj[m
+[1m+++ b/SaaSCRM.Application/SaaSCRM.Application.csproj[m
+[36m@@ -15,10 +15,6 @@[m
+     <Folder Include="DTOs\" />[m
+   </ItemGroup>[m
+ [m
+[31m-  <ItemGroup>[m
+[31m-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />[m
+[31m-  </ItemGroup>[m
+[31m-[m
+[31m- [m
+[32m+[m[41m  [m
+ [m
+ </Project>[m
+[1mdiff --git a/SaaSCRM.Application/Services/TenantService.cs b/SaaSCRM.Application/Services/TenantService.cs[m
+[1mindex c9f1490..8a3e3a4 100644[m
+[1m--- a/SaaSCRM.Application/Services/TenantService.cs[m
+[1m+++ b/SaaSCRM.Application/Services/TenantService.cs[m
+[36m@@ -1,6 +1,7 @@[m
+ ﻿using SaaSCRM.Application.Interfaces;[m
+ using SaaSCRM.Domain.Entities;[m
+ using System;[m
+[32m+[m[32musing System.Collections;[m
+ using System.Collections.Generic;[m
+ using System.Linq;[m
+ using System.Text;[m
+[36m@@ -26,5 +27,24 @@[m [mnamespace SaaSCRM.Application.Services[m
+             await _tenantRepository.AddAsync(tenant);[m
+             return "Tenant created successfully.";[m
+         }[m
+[32m+[m
+[32m+[m[32m        public async Task<IEnumerable<Tenant>> GetAllAsync()[m
+[32m+[m[32m        {[m
+[32m+[m[32m            return  await _tenantRepository.GetAllAsync();[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public async Task<Tenant?> GetByIdAsync( Guid id)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            return await _tenantRepository.GetByIdAsync(id);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        public async Task<Tenant?> GetByCompanyNameAsync(string CompanyName)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            return await _tenantRepository.GetByCompanyNameAsync(CompanyName);[m
+[32m+[m[32m        }[m
+[32m+[m[32m        public async Task<Tenant?> GetByEmailAsync(string emailid)[m
+[32m+[m[32m        {[m
+[32m+[m[32m            return await _tenantRepository.GetByEmailAsync(emailid);[m
+[32m+[m[32m        }[m
+     }[m
+ }[m
+[1mdiff --git a/SaaSCRM.Domain/SaaSCRM.Domain.csproj b/SaaSCRM.Domain/SaaSCRM.Domain.csproj[m
+[1mindex 7ea72f2..dc4f9ee 100644[m
+[1m--- a/SaaSCRM.Domain/SaaSCRM.Domain.csproj[m
+[1m+++ b/SaaSCRM.Domain/SaaSCRM.Domain.csproj[m
+[36m@@ -11,8 +11,6 @@[m
+     <Folder Include="Interfaces\" />[m
+   </ItemGroup>[m
+ [m
+[31m-  <ItemGroup>[m
+[31m-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />[m
+[31m-  </ItemGroup>[m
+[32m+[m
+ [m
+ </Project>[m
+[1mdiff --git a/SaaSCRM.Infrastructure/Repositories/TenantRepository.cs b/SaaSCRM.Infrastructure/Repositories/TenantRepository.cs[m
+[1mindex 6c2ea10..53b4b3c 100644[m
+[1m--- a/SaaSCRM.Infrastructure/Repositories/TenantRepository.cs[m
+[1m+++ b/SaaSCRM.Infrastructure/Repositories/TenantRepository.cs[m
+[36m@@ -21,7 +21,7 @@[m [mnamespace SaaSCRM.Infrastructure.Repositories[m
+ [m
+         public async Task AddAsync(Tenant tenant)[m
+         {[m
+[31m-            await _Context.AddAsync(tenant);[m
+[32m+[m[32m            await _Context.Tenants.AddAsync(tenant);[m
+             await _Context.SaveChangesAsync();[m
+         }[m
+ [m
+[36m@@ -35,29 +35,38 @@[m [mnamespace SaaSCRM.Infrastructure.Repositories[m
+             return await _Context.Tenants.AnyAsync(x => x.CompanyName == companyName);[m
+         }[m
+ [m
+[31m-        public Task<IEnumerable<Tenant>> GetAllAsync()[m
+[32m+[m[32m        public async Task<IEnumerable<Tenant>> GetAllAsync()[m
+         {[m
+[31m-            throw new NotImplementedException();[m
+[32m+[m[32m            return await _Context.Tenants.ToListAsync();[m
+         }[m
+ [m
+[31m-        public Task<Tenant?> GetByCompanyNameAsync(string companyName)[m
+[32m+[m[32m        public async Task<Tenant?> GetByCompanyNameAsync(string companyName)[m
+         {[m
+[31m-            throw new NotImplementedException();[m
+[32m+[m[32m            return await _Context.Tenants.FirstOrDefaultAsync(x => x.CompanyName == companyName);[m
+         }[m
+ [m
+[31m-        public Task<Tenant?> GetByEmailAsync(string email)[m
+[32m+[m[32m        public async Task<Tenant?> GetByEmailAsync(string email)[m
+         {[m
+[31m-            throw new NotImplementedException();[m
+[32m+[m[32m            return await _Context.Tenants.FirstOrDefaultAsync(x => x.Email == email);[m
+         }[m
+ [m
+[31m-        public Task<Tenant?> GetByIdAsync(Guid id)[m
+[32m+[m[32m        public async Task<Tenant?> GetByIdAsync(Guid id)[m
+         {[m
+[31m-            throw new NotImplementedException();[m
+[32m+[m[32m            return await _Context.Tenants.FindAsync(id);[m
+         }[m
+ [m
+[31m-        public Task UpdateAsync(Tenant tenant)[m
+[32m+[m[32m        public async Task UpdateAsync(Tenant tenant)[m
+         {[m
+[31m-            throw new NotImplementedException();[m
+[32m+[m[32m            var existingTenant = await _Context.Tenants.FindAsync(tenant.Id);[m
+[32m+[m[32m            if (existingTenant == null)[m
+[32m+[m[32m                return;[m
+[32m+[m[32m            existingTenant.CompanyName = tenant.CompanyName;[m
+[32m+[m[32m            existingTenant.Email = tenant.Email;[m
+[32m+[m[32m            existingTenant.PhoneNumber = tenant.PhoneNumber;[m
+[32m+[m[32m            existingTenant.Address = tenant.Address;[m
+[32m+[m[32m            existingTenant.IsActive = tenant.IsActive;[m
+[32m+[m
+[32m+[m[32m            await _Context.SaveChangesAsync();[m
+         }[m
+     }[m
+ }[m
+[1mdiff --git a/SaaSCRM.Infrastructure/SaaSCRM.Infrastructure.csproj b/SaaSCRM.Infrastructure/SaaSCRM.Infrastructure.csproj[m
+[1mindex 2bd0f4c..e3f4d80 100644[m
+[1

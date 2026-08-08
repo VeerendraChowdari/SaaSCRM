@@ -13,5 +13,6 @@ namespace SaaSCRM.Infrastructure.Persistence
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<Tenant>Tenants { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
