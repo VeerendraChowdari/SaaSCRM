@@ -6,10 +6,11 @@ namespace SaaSCRM.Application.Services
     public class UserService
     {
         public readonly IUserRepository _UserRepository;
-
-        public UserService(IUserRepository userRepository)
+        private readonly IPasswordHasher _PasswordHasher;
+        public UserService(IUserRepository userRepository , IPasswordHasher passwordHasher)
         {
             _UserRepository = userRepository;
+            _PasswordHasher = passwordHasher;
         }
 
         public async Task<string> AddAsync(User user)
@@ -20,7 +21,7 @@ namespace SaaSCRM.Application.Services
             {
                 return "User already exists with this email.";
             }
-
+          user.PasswordHash = _PasswordHasher.HashPassword(user,user.PasswordHash);
             await _UserRepository.AddAsync(user);
 
             return "User created successfully.";

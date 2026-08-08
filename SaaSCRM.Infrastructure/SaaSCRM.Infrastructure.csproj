@@ -16,6 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.17" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
@@ -23,6 +24,11 @@
     <ProjectReference Include="..\SaaSCRM.Application\SaaSCRM.Application.csproj" />
     <ProjectReference Include="..\SaaSCRM.Domain\SaaSCRM.Domain.csproj" />
     <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>
