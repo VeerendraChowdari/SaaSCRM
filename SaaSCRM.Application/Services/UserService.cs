@@ -1,4 +1,5 @@
-﻿using SaaSCRM.Application.Interfaces;
+using SaaSCRM.Application.DTOs;
+using SaaSCRM.Application.Interfaces;
 using SaaSCRM.Domain.Entities;
 
 namespace SaaSCRM.Application.Services
@@ -68,6 +69,20 @@ namespace SaaSCRM.Application.Services
             await _UserRepository.UpdateAsync(user);
 
             return "User updated successfully.";
+        }
+
+        public async Task<string> LoginAsync(LoginRequest request)
+        {
+            var ExistingEmail = await _UserRepository.GetByEmailAsync(request.Email);
+            if (ExistingEmail == null)
+                return "Invalid email or password.";
+
+            var PasswordMatch =  _PasswordHasher.VerifyPassword(ExistingEmail, request.Password,ExistingEmail.PasswordHash);
+            if (!PasswordMatch)
+                return "Invalid email or password.";
+
+                return "Login Successfull";
+
         }
     }
 }

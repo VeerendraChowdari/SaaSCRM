@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SaaSCRM.Domain\SaaSCRM.Domain.csproj" />
-    <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.17" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
+    <ProjectReference Include="..\SaaSCRM.Domain\SaaSCRM.Domain.csproj" />
+    <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
   </ItemGroup>
 
   

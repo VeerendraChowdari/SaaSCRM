@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using SaaSCRM.Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using SaaSCRM.Application.Services;
 using SaaSCRM.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SaaSCRM.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly UserService _UserService;
@@ -17,6 +20,8 @@ namespace SaaSCRM.API.Controllers
 
         // POST: api/User
         [HttpPost]
+        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> AddAsync(User user)
         {
             var res = await _UserService.AddAsync(user);
@@ -26,6 +31,7 @@ namespace SaaSCRM.API.Controllers
 
         // GET: api/User
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllAsync()
         {
             var res = await _UserService.GetAllAsync();
@@ -35,6 +41,7 @@ namespace SaaSCRM.API.Controllers
 
         // GET: api/User/{id}
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var res = await _UserService.GetByIdAsync(id);
@@ -49,6 +56,7 @@ namespace SaaSCRM.API.Controllers
 
         // GET: api/User/email/{email}
         [HttpGet("email/{email}")]
+        [Authorize]
         public async Task<IActionResult> GetByEmailAsync(string email)
         {
             var res = await _UserService.GetByEmailAsync(email);
@@ -63,6 +71,7 @@ namespace SaaSCRM.API.Controllers
 
         // PUT: api/User/{id}
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateAsync(Guid id, User user)
         {
             if (id != user.Id)
@@ -82,6 +91,7 @@ namespace SaaSCRM.API.Controllers
 
         // DELETE: api/User/{id}
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var res = await _UserService.DeleteAsync(id);
@@ -90,6 +100,17 @@ namespace SaaSCRM.API.Controllers
             {
                 return NotFound(res);
             }
+
+            return Ok(res);
+        }
+
+
+        // POST: api/User
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginAsync(LoginRequest request)
+        {
+            var res = await _UserService.LoginAsync(request);
 
             return Ok(res);
         }
