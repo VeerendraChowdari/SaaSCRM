@@ -18,5 +18,6 @@ namespace SaaSCRM.Domain.Entities
         public bool IsActive { get; set; }
         public string UserRole { get; set; }
         public DateTime CreatedOn { get; set; }
+        public Tenant Tenant { get; set; } = null!;
      }
 }

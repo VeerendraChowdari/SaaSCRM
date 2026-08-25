@@ -8,4 +8,5 @@
         public string Address { get; set; } = string.Empty;
         public DateTime CreatedOn { get; set; }
         public bool IsActive { get; set; }
+    public ICollection<User> Users { get; set; } = new List<User>();
     }

@@ -1,6 +1,7 @@
 using SaaSCRM.Application.DTOs;
 using SaaSCRM.Application.Interfaces;
 using SaaSCRM.Domain.Entities;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace SaaSCRM.Application.Services
 {
@@ -8,12 +9,19 @@ namespace SaaSCRM.Application.Services
     {
         public readonly IUserRepository _UserRepository;
         private readonly IPasswordHasher _PasswordHasher;
-        public UserService(IUserRepository userRepository , IPasswordHasher passwordHasher)
+        private readonly ICurrentUserService _CurrentUser;
+        private readonly IJwtService _JwtService;
+        public UserService(
+    IUserRepository userRepository,
+    IPasswordHasher passwordHasher,
+    IJwtService ijwtservice,
+    ICurrentUserService currentUser)
         {
             _UserRepository = userRepository;
             _PasswordHasher = passwordHasher;
+            _JwtService = ijwtservice;
+            _CurrentUser = currentUser;
         }
-
         public async Task<string> AddAsync(User user)
         {
             var res = await _UserRepository.GetByEmailAsync(user.Email);
@@ -23,6 +31,7 @@ namespace SaaSCRM.Application.Services
                 return "User already exists with this email.";
             }
           user.PasswordHash = _PasswordHasher.HashPassword(user,user.PasswordHash);
+            user.TenantId = _CurrentUser.TenantId;
             await _UserRepository.AddAsync(user);
 
             return "User created successfully.";
@@ -35,9 +44,8 @@ namespace SaaSCRM.Application.Services
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _UserRepository.GetAllAsync();
+            return await _UserRepository.GetAllAsync(_CurrentUser.TenantId);
         }
-
         public async Task<User?> GetByEmailAsync(string email)
         {
             return await _UserRepository.GetByEmailAsync(email);
@@ -81,7 +89,21 @@ namespace SaaSCRM.Application.Services
             if (!PasswordMatch)
                 return "Invalid email or password.";
 
-                return "Login Successfull";
+            var token = _JwtService.GenerateToken(ExistingEmail);
+
+            //return token;
+            //var token = _JwtService.GenerateToken(ExistingEmail);
+
+            //var handler = new JwtSecurityTokenHandler();
+            //var jwtToken = handler.ReadJwtToken(token);
+
+            //Console.WriteLine("===== JWT HEADER =====");
+            //Console.WriteLine(jwtToken.Header.SerializeToJson());
+
+            //Console.WriteLine("===== JWT PAYLOAD =====");
+            //Console.WriteLine(jwtToken.Payload.SerializeToJson());
+
+            return token;
 
         }
     }

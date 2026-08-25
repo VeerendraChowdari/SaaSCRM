@@ -36,9 +36,11 @@ namespace SaaSCRM.Infrastructure.Repositories
                 return;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync(Guid tenantId)
         {
-            return await _Context.Users.ToListAsync();
+            return await _Context.Users
+                .Where(u => u.TenantId == tenantId)
+                .ToListAsync();
         }
 
         public async Task<User?> GetByEmailAsync(string email)
@@ -48,7 +50,9 @@ namespace SaaSCRM.Infrastructure.Repositories
 
         public async Task<User?> GetByIdAsync(Guid id)
         {
-            return await _Context.Users.FindAsync(id);
+            return  await _Context.Users
+                .Include(u => u.Tenant)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task UpdateAsync(User user)

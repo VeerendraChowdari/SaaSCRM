@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>721484bb-0f3d-47b5-a52b-c90b1ba571f9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +21,6 @@
     <ProjectReference Include="..\SaaSCRM.Application\SaaSCRM.Application.csproj" />
     <ProjectReference Include="..\SaaSCRM.Infrastructure\SaaSCRM.Infrastructure.csproj" />
     <ProjectReference Include="..\SaaSCRM.Shared\SaaSCRM.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Middleware\" />
   </ItemGroup>
 
 </Project>

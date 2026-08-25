@@ -20,10 +20,17 @@ namespace SaaSCRM.API.Controllers
 
         // POST: api/User
         [HttpPost]
-        [Authorize]
-        [AllowAnonymous]
-        public async Task<IActionResult> AddAsync(User user)
+        public async Task<IActionResult> AddAsync(CreateUserRequest request)
         {
+            var user = new User
+            {
+                FirstName = "Test",
+                LastName = "User",
+                Email = request.Email,
+                Phoneno = "0000000000",
+                PasswordHash = request.Password,
+                UserRole = "User"
+            };
             var res = await _UserService.AddAsync(user);
 
             return Ok(res);
@@ -31,17 +38,23 @@ namespace SaaSCRM.API.Controllers
 
         // GET: api/User
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllAsync()
         {
             var res = await _UserService.GetAllAsync();
 
-            return Ok(res);
+            var response = res.Select(user => new UserResponseDto
+            {
+                Id = user.Id,
+                TenantId = user.TenantId,
+                Email = user.Email,
+                UserRole = user.UserRole
+            });
+
+            return Ok(response);
         }
 
         // GET: api/User/{id}
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var res = await _UserService.GetByIdAsync(id);
@@ -51,12 +64,18 @@ namespace SaaSCRM.API.Controllers
                 return NotFound("User not found.");
             }
 
-            return Ok(res);
+            var response = new UserResponseDto
+            {
+                Id = res.Id,
+                TenantId = res.TenantId,
+                Email = res.Email,
+                UserRole = res.UserRole
+            };
+            return Ok(response);
         }
 
         // GET: api/User/email/{email}
         [HttpGet("email/{email}")]
-        [Authorize]
         public async Task<IActionResult> GetByEmailAsync(string email)
         {
             var res = await _UserService.GetByEmailAsync(email);
@@ -65,33 +84,37 @@ namespace SaaSCRM.API.Controllers
             {
                 return NotFound("User not found.");
             }
-
-            return Ok(res);
+            var response = new UserResponseDto
+            {
+                Id = res.Id,
+                TenantId = res.TenantId,
+                Email = res.Email,
+                UserRole = res.UserRole
+            };
+            return Ok(response);
         }
 
         // PUT: api/User/{id}
         [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> UpdateAsync(Guid id, User user)
+        public async Task<IActionResult> UpdateAsync(Guid id, UpdateUserRequest request)
         {
-            if (id != user.Id)
+            var existingUser = await _UserService.GetByIdAsync(id);
+
+            if (existingUser == null)
             {
-                return BadRequest("User ID mismatch.");
+                return NotFound("User not found.");
             }
 
-            var res = await _UserService.UpdateAsync(user);
+            existingUser.Email = request.Email;
 
-            if (res == "User not found.")
-            {
-                return NotFound(res);
-            }
+            var res = await _UserService.UpdateAsync(existingUser);
 
             return Ok(res);
         }
 
         // DELETE: api/User/{id}
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var res = await _UserService.DeleteAsync(id);

@@ -25,8 +25,8 @@ namespace SaaSCRM.Infrastructure.Security
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-        new Claim("tenantId", user.TenantId.ToString()),
+new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim("tenantId", user.TenantId.ToString()),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
         new Claim(ClaimTypes.Role, user.UserRole)
     };

@@ -39,7 +39,6 @@ namespace SaaSCRM.Infrastructure.Repositories
         {
             return await _Context.Tenants.ToListAsync();
         }
-
         public async Task<Tenant?> GetByCompanyNameAsync(string companyName)
         {
             return await _Context.Tenants.FirstOrDefaultAsync(x => x.CompanyName == companyName);
@@ -52,7 +51,9 @@ namespace SaaSCRM.Infrastructure.Repositories
 
         public async Task<Tenant?> GetByIdAsync(Guid id)
         {
-            return await _Context.Tenants.FindAsync(id);
+            return await _Context.Tenants
+                .Include(t => t.Users)
+                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task UpdateAsync(Tenant tenant)

@@ -13,7 +13,7 @@ namespace SaaSCRM.Application.Interfaces
         Task<User?> GetByIdAsync(Guid id);
         Task DeleteAsync(Guid id);
         Task UpdateAsync(User user);
-        Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetAllAsync(Guid tenantId);
         Task<User?> GetByEmailAsync(string email);
     }
 }
