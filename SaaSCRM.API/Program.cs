@@ -30,10 +30,12 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtService,  JwtService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 
 builder.Services.AddScoped<TenantService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CustomerRepository>();
+builder.Services.AddScoped<LeadRepository>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

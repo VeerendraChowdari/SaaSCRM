@@ -23,5 +23,6 @@ namespace SaaSCRM.Infrastructure.Persistence
                 .OnDelete(DeleteBehavior.Restrict);
         }
         public DbSet<Customer> Customers{get;set; }
+        public DbSet<Lead> Leads { get; set; }  
     }
 }
