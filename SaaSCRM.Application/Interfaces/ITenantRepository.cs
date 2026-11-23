@@ -11,4 +11,5 @@ public interface ITenantRepository
     Task<bool> ExistsAsync(string companyName);
     Task<Tenant?> GetByEmailAsync(string email);
     Task<Tenant?> GetByCompanyNameAsync(string companyName);
+    Task<Tenant?> GetBySlugAsync(string slug);
 }

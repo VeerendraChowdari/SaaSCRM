@@ -1,12 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using SaaSCRM.Application.Interfaces;
 using SaaSCRM.Domain.Entities;
 using SaaSCRM.Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SaaSCRM.Infrastructure.Repositories
 {
@@ -32,35 +28,41 @@ namespace SaaSCRM.Infrastructure.Repositories
 
         public async Task<bool> ExistsAsync(string companyName)
         {
-            return await _Context.Tenants.AnyAsync(x => x.CompanyName == companyName);
+            return await _Context.Tenants
+                .AnyAsync(x => x.CompanyName == companyName);
         }
 
         public async Task<IEnumerable<Tenant>> GetAllAsync()
         {
             return await _Context.Tenants.ToListAsync();
         }
+
         public async Task<Tenant?> GetByCompanyNameAsync(string companyName)
         {
-            return await _Context.Tenants.FirstOrDefaultAsync(x => x.CompanyName == companyName);
+            return await _Context.Tenants
+                .FirstOrDefaultAsync(x => x.CompanyName == companyName);
         }
 
         public async Task<Tenant?> GetByEmailAsync(string email)
         {
-            return await _Context.Tenants.FirstOrDefaultAsync(x => x.Email == email);
+            return await _Context.Tenants
+                .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<Tenant?> GetByIdAsync(Guid id)
         {
             return await _Context.Tenants
                 .Include(t => t.Users)
-                 .FirstOrDefaultAsync(t => t.Id == id);
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task UpdateAsync(Tenant tenant)
         {
             var existingTenant = await _Context.Tenants.FindAsync(tenant.Id);
+
             if (existingTenant == null)
                 return;
+
             existingTenant.CompanyName = tenant.CompanyName;
             existingTenant.Email = tenant.Email;
             existingTenant.PhoneNumber = tenant.PhoneNumber;
@@ -68,6 +70,12 @@ namespace SaaSCRM.Infrastructure.Repositories
             existingTenant.IsActive = tenant.IsActive;
 
             await _Context.SaveChangesAsync();
+        }
+
+        public async Task<Tenant?> GetBySlugAsync(string slug)
+        {
+            return await _Context.Tenants
+                .FirstOrDefaultAsync(t => t.Slug == slug);
         }
     }
 }

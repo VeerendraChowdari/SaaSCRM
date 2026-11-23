@@ -1,25 +1,7 @@
-# Visual Studio
-.vs/
+**/bin/
+**/obj/
+**/.vs/
+.vscode/
+.idea/
 *.user
 *.suo
-*.rsuser
-
-# Build output
-[Bb]in/
-[Oo]bj/
-[Dd]ebug/
-[Rr]elease/
-
-# Logs
-*.log
-
-# NuGet
-*.nupkg
-
-# Local configuration
-appsettings.Development.json
-appsettings.Local.json
-
-# OS
-Thumbs.db
-.DS_Store

@@ -21,8 +21,14 @@ namespace SaaSCRM.Infrastructure.Persistence
                 .WithMany(t => t.Users)
                 .HasForeignKey(u => u.TenantId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Tenant>()
+                .HasIndex(t => t.Slug)
+                .IsUnique();
         }
         public DbSet<Customer> Customers{get;set; }
-        public DbSet<Lead> Leads { get; set; }  
+        public DbSet<Lead> Leads { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PendingRegistration> PendingRegistrations { get; set; }
     }
 }

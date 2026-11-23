@@ -7,9 +7,11 @@ using SaaSCRM.API.Middleware;
 using SaaSCRM.API.Services;
 using SaaSCRM.Application.Interfaces;
 using SaaSCRM.Application.Services;
+using SaaSCRM.Infrastructure.Configurations;
 using SaaSCRM.Infrastructure.Persistence;
 using SaaSCRM.Infrastructure.Repositories;
 using SaaSCRM.Infrastructure.Security;
+using SaaSCRM.Infrastructure.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,14 +31,28 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IJwtService,  JwtService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 
 builder.Services.AddScoped<TenantService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<CustomerRepository>();
-builder.Services.AddScoped<LeadRepository>();
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ILeadRepository, LeadRepository>();
+
+builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<LeadService>();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -85,6 +101,18 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPendingRegistrationRepository, PendingRegistrationRepository>();
+
+builder.Services.AddScoped<SubscriptionPlanService>();
+builder.Services.AddScoped<SignupPaymentService>();
+builder.Services.AddScoped<ITenantRegistrationRepository,TenantRegistrationRepository>();
+builder.Services.AddHttpClient<ICashfreePaymentService, CashfreePaymentService>();
+
+builder.Services.Configure<CashfreeSettings>(
+    builder.Configuration.GetSection("Cashfree"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,6 +124,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("ReactPolicy");
 //app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();

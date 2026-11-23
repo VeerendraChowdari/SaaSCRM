@@ -8,9 +8,9 @@ namespace SaaSCRM.Application.Interfaces
         Task UpdateLeadAsync(Lead lead);
         Task DeleteLeadAsync(Lead lead);
 
-        Task<Lead?> GetLeadByIdAsync(Guid id);
-        Task<Lead?> GetLeadByNameAsync(string name);
-        Task<Lead?> GetLeadByEmailAsync(string email);
+        Task<Lead?> GetLeadByIdAsync(Guid id, Guid tenantId);
+        Task<Lead?> GetLeadByNameAsync(string name, Guid tenantId);
+        Task<Lead?> GetLeadByEmailAsync(string email, Guid tenantId);
 
         Task<IEnumerable<Lead>> GetAllLeadsAsync(Guid tenantId);
     }

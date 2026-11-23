@@ -27,7 +27,7 @@ namespace SaaSCRM.Application.Services
             {
                 return "Customer already exists";
             }
-
+            customer.TenantId = _currentUser.TenantId;
             await _customerRepository.AddAsync(customer);
 
             return "Customer added successfully";

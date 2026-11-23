@@ -9,4 +9,5 @@
         public DateTime CreatedOn { get; set; }
         public bool IsActive { get; set; }
     public ICollection<User> Users { get; set; } = new List<User>();
-    }
+    public string Slug { get; set; } = string.Empty;
+}

@@ -1,4 +1,5 @@
-﻿using SaaSCRM.Application.DTOs;
+﻿
+using SaaSCRM.Application.DTOs;
 using SaaSCRM.Application.Interfaces;
 using SaaSCRM.Domain.Entities;
 
@@ -17,10 +18,13 @@ namespace SaaSCRM.Application.Services
             _currentUser = currentUserService;
         }
 
+        // Existing CRM lead creation
         public async Task<string> AddLeadAsync(CreateLeadRequest request)
         {
             var existingLead = await _leadRepository
-                .GetLeadByEmailAsync(request.Email);
+                .GetLeadByEmailAsync(
+                    request.Email,
+                    _currentUser.TenantId);
 
             if (existingLead != null)
             {
@@ -44,6 +48,38 @@ namespace SaaSCRM.Application.Services
             return "Lead added successfully";
         }
 
+        // NEW: Public website enquiry creation
+        public async Task<string> AddPublicEnquiryAsync(
+            Guid tenantId,
+            CreatePublicEnquiryRequest request)
+        {
+            var existingLead = await _leadRepository
+                .GetLeadByEmailAsync(request.Email, tenantId);
+
+            if (existingLead != null)
+            {
+                return "Lead already exists";
+            }
+
+            var lead = new Lead
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                Name = request.Name,
+                CompanyName = request.CompanyName,
+                Email = request.Email,
+                Phone = request.Phone,
+                Source = "Website",
+                Status = "New",
+                AssignedToUserId = null,
+                CreatedOn = DateTime.UtcNow
+            };
+
+            await _leadRepository.AddLeadAsync(lead);
+
+            return "Enquiry submitted successfully";
+        }
+
         public async Task<IEnumerable<Lead>> GetAllLeadsAsync()
         {
             return await _leadRepository
@@ -52,25 +88,33 @@ namespace SaaSCRM.Application.Services
 
         public async Task<Lead?> GetLeadByIdAsync(Guid id)
         {
-            return await _leadRepository.GetLeadByIdAsync(id);
+            return await _leadRepository
+                .GetLeadByIdAsync(id, _currentUser.TenantId);
         }
 
         public async Task<Lead?> GetLeadByEmailAsync(string email)
         {
-            return await _leadRepository.GetLeadByEmailAsync(email);
+            return await _leadRepository
+                .GetLeadByEmailAsync(email, _currentUser.TenantId);
         }
 
         public async Task<Lead?> GetLeadByNameAsync(string name)
         {
-            return await _leadRepository.GetLeadByNameAsync(name);
+            return await _leadRepository
+                .GetLeadByNameAsync(name, _currentUser.TenantId);
         }
 
-        public async Task UpdateLeadAsync(Guid id, UpdateLeadRequest request)
+        public async Task UpdateLeadAsync(
+            Guid id,
+            UpdateLeadRequest request)
         {
-            var existingLead = await _leadRepository.GetLeadByIdAsync(id);
+            var existingLead = await _leadRepository
+                .GetLeadByIdAsync(id, _currentUser.TenantId);
 
             if (existingLead == null)
+            {
                 return;
+            }
 
             existingLead.Name = request.Name;
             existingLead.CompanyName = request.CompanyName;
@@ -85,10 +129,13 @@ namespace SaaSCRM.Application.Services
 
         public async Task<bool> DeleteLeadAsync(Guid id)
         {
-            var existingLead = await _leadRepository.GetLeadByIdAsync(id);
+            var existingLead = await _leadRepository
+                .GetLeadByIdAsync(id, _currentUser.TenantId);
 
             if (existingLead == null)
+            {
                 return false;
+            }
 
             await _leadRepository.DeleteLeadAsync(existingLead);
 

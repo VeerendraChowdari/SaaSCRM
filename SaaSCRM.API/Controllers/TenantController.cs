@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using SaaSCRM.Application.DTOs;
 using SaaSCRM.Application.Services;
+using SaaSCRM.Application.Interfaces;
 using SaaSCRM.Domain.Entities;
 
 namespace SaaSCRM.API.Controllers
@@ -9,25 +13,50 @@ namespace SaaSCRM.API.Controllers
     public class TenantController : ControllerBase
     {
         private readonly TenantService _tenantService;
-        public TenantController(TenantService tenantService)
+        private readonly ICurrentUserService _currentUser;
+
+        public TenantController(
+            TenantService tenantService,
+            ICurrentUserService currentUser)
         {
             _tenantService = tenantService;
+            _currentUser = currentUser;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterTenant(
+            RegisterTenantRequest request)
+        {
+            var result = await _tenantService
+                .RegisterTenantAsync(request);
+
+            if (result == "Company already exists." ||
+                result == "Admin email already exists.")
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTenant(Tenant tenant)
         {
-            var result= await _tenantService.CreateTenant(tenant);
+            var result = await _tenantService.CreateTenant(tenant);
+
             if (result == "Company already exists.")
                 return BadRequest(result);
+
             return Ok(result);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
             var result = await _tenantService.GetAllAsync();
             return Ok(result);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
@@ -39,18 +68,41 @@ namespace SaaSCRM.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("CompanyName/{CompanyName}")]
-        public async Task<IActionResult> GetByCompanyNameAsync(String CompanyName)
+        // NEW: Get the currently logged-in user's tenant
+        [Authorize]
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrentTenant()
         {
-            var res = await _tenantService.GetByCompanyNameAsync(CompanyName);
-            return Ok(res);
+            var tenant = await _tenantService
+                .GetByIdAsync(_currentUser.TenantId);
+
+            if (tenant == null)
+                return NotFound("Tenant not found.");
+
+            return Ok(new
+            {
+                tenant.CompanyName,
+                tenant.Slug
+            });
+        }
+
+        [HttpGet("CompanyName/{CompanyName}")]
+        public async Task<IActionResult> GetByCompanyNameAsync(
+            string CompanyName)
+        {
+            var result = await _tenantService
+                .GetByCompanyNameAsync(CompanyName);
+
+            return Ok(result);
         }
 
         [HttpGet("emailid/{emailid}")]
         public async Task<IActionResult> GetByEmailAsync(string emailid)
         {
-            var res = await _tenantService.GetByEmailAsync(emailid);
-            return Ok(res);
+            var result = await _tenantService
+                .GetByEmailAsync(emailid);
+
+            return Ok(result);
         }
     }
 }

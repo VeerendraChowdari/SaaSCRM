@@ -18,24 +18,24 @@ namespace SaaSCRM.API.Controllers
             _UserService = userService;
         }
 
-        // POST: api/User
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAsync(CreateUserRequest request)
         {
             var user = new User
             {
-                FirstName = "Test",
-                LastName = "User",
+                FirstName = request.FirstName,
+                LastName = request.LastName,
                 Email = request.Email,
-                Phoneno = "0000000000",
+                Phoneno = request.Phoneno,
                 PasswordHash = request.Password,
                 UserRole = "User"
             };
+
             var res = await _UserService.AddAsync(user);
 
             return Ok(res);
         }
-
         // GET: api/User
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()

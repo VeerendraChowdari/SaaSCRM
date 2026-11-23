@@ -4,12 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SaaSCRM.Application.DTOs
-{
-    public class CreateUserRequest
+    namespace SaaSCRM.Application.DTOs
     {
-        public string Email { get; set; } = string.Empty;
+        public class CreateUserRequest
+        {
+            public string FirstName { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
-    }
+            public string LastName { get; set; } = string.Empty;
+
+            public string Email { get; set; } = string.Empty;
+
+            public string Phoneno { get; set; } = string.Empty;
+
+            public string Password { get; set; } = string.Empty;
+        }
 }
